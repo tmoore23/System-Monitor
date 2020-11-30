@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <string>
 #include <vector>
+#include <map>
 
 #include "linux_parser.h"
 
@@ -9,6 +10,7 @@ using std::stof;
 using std::string;
 using std::to_string;
 using std::vector;
+using std::map;
 
 string LinuxParser::OperatingSystem() {
   string line;
@@ -64,8 +66,31 @@ vector<int> LinuxParser::Pids() {
   return pids;
 }
 
-// TODO: Read and return the system memory utilization
-float LinuxParser::MemoryUtilization() { return 0.0; }
+float LinuxParser::MemoryUtilization() {
+  float memory_utilization = 0.0, value;
+  string line, key;
+  map <string, float> system_map;
+
+  std::ifstream filestream(kProcDirectory + kMeminfoFilename);
+  if (filestream.is_open()) {
+    while (std::getline(filestream, line)) {
+      std::istringstream linestream(line);
+      while (linestream >> key >> value) {
+        key.pop_back();
+        system_map[key] = value;
+        /*
+        * Memory calculation is based on the following link:
+        * https://stackoverflow.com/questions/41224738/how-to-calculate-system-memory-usage-from-proc-meminfo-like-htop/41251290#41251290
+        */
+        if (system_map.count("MemTotal") && system_map.count("MemFree")) {
+          return system_map["MemTotal"] - system_map["MemFree"];
+        }
+      }
+    }
+  }
+
+  return memory_utilization; 
+}
 
 // TODO: Read and return the system uptime
 long LinuxParser::UpTime() { return 0; }
