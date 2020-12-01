@@ -13,9 +13,15 @@ string Format::ElapsedTime(long totalseconds) {
 
     stringstream result;
     if (hours < 10) {
-        result << "0" << hours << ":" << minutes << ":" << seconds;
+        result << "0" << hours;
     } else {
-        result << hours << ":" << minutes << ":" << seconds;
+        result << hours;
+    }
+        
+    if (minutes < 10) {
+        result << ":" << "0" << minutes << ":" << seconds;
+    } else {
+        result << ":" << minutes << ":" << seconds;
     }
 
     return result.str(); 
