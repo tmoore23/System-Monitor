@@ -3,6 +3,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 #include "system.h"
 
@@ -10,17 +11,17 @@ using std::set;
 using std::size_t;
 using std::string;
 using std::vector;
+using std::sort;
 
-// TODO: Return the system's CPU
 Processor& System::Cpu() { 
     return cpu_; 
 }
 
-// TODO: Return a container composed of the system's processes
 vector<Process>& System::Processes() { 
     for (auto Pid : LinuxParser::Pids()) {
         processes_.push_back(Process(Pid));
     }
+    sort(processes_.begin(), processes_.end());
     return processes_; 
 }
 
@@ -28,7 +29,6 @@ string System::Kernel() {
     return LinuxParser::Kernel(); 
 }
 
-// TODO: Return the system's memory utilization
 float System::MemoryUtilization() { 
     return LinuxParser::MemoryUtilization(); 
 }
